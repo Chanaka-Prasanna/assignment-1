@@ -3,11 +3,11 @@ from rl import QLearningAgent
 from swarm import apply_swarm_rules
 from visualize import visualize
 
-NUM_AGENTS = 3
-NUM_OBSTACLES = 2
+NUM_AGENTS = 20
+NUM_OBSTACLES = 3
 GRID_SIZE = (10, 10)
 EPISODES = 1       # for visualization, run 1 episode
-MAX_STEPS = 200
+MAX_STEPS = 1000
 
 def reward_function(agent_pos, goal_pos, obstacles):
     if agent_pos == goal_pos:
@@ -35,8 +35,11 @@ def run_simulation():
                 state = agents[i].get_state(pos, env.goal)
                 action = agents[i].choose_action(state)
 
+                # Ignore agents already on the goal so others can stack on it
+                other_positions = [p for p in positions if p != env.goal]
+
                 next_pos = apply_swarm_rules(
-                    pos, action, positions, env.obstacles, env.goal,
+                    pos, action, other_positions, env.obstacles, env.goal,
                     rows=env.rows, cols=env.cols
                 )
 
