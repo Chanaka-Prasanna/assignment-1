@@ -1,58 +1,65 @@
-import random
+from env import GridWorld
+from rl import QLearningAgent
+from swarm import apply_swarm_rules
+from visualize import visualize
 
-# Grid parameters
-GRID_SIZE = (10, 10)   # rows x cols
 NUM_AGENTS = 3
 NUM_OBSTACLES = 2
+GRID_SIZE = (10, 10)
+EPISODES = 10       # for visualization, run 1 episode
+MAX_STEPS = 100
 
-# Symbols for console display
-EMPTY = "."
-AGENT = "A"
-GOAL = "G"
-OBSTACLE = "#"
+def reward_function(agent_pos, goal_pos, obstacles):
+    if agent_pos == goal_pos:
+        return 10
+    if any(r1 <= agent_pos[0] <= r2 and c1 <= agent_pos[1] <= c2 for (r1, c1), (r2, c2) in obstacles):
+        return -5
+    return -1
+def run_simulation():
+    env = GridWorld(GRID_SIZE[0], GRID_SIZE[1], NUM_AGENTS, NUM_OBSTACLES)
+    agents = [QLearningAgent(env.rows, env.cols) for _ in range(NUM_AGENTS)]
 
-class GridWorld:
-    def __init__(self, rows, cols, num_agents, num_obstacles):
-        self.rows = rows
-        self.cols = cols
-        self.grid = [[EMPTY for _ in range(cols)] for _ in range(rows)]
+    all_history = []  # track across episodes
 
-        # Place goal
-        self.goal = (random.randint(0, rows - 1), random.randint(0, cols - 1))
-        self.grid[self.goal[0]][self.goal[1]] = GOAL
+    for episode in range(EPISODES):
+        positions = env.reset()
+        agents_history = []
 
-        # Place agents
-        self.agents = []
-        for _ in range(num_agents):
-            pos = self._random_empty_cell()
-            self.agents.append(pos)
-            self.grid[pos[0]][pos[1]] = AGENT
+        for step in range(MAX_STEPS):
+            new_positions = []
+            for i, pos in enumerate(positions):
+                if pos == env.goal:
+                    new_positions.append(pos)
+                    continue
 
-        # Place obstacles (rectangular)
-        self.obstacles = []
-        for _ in range(num_obstacles):
-            r1, c1 = self._random_empty_cell()
-            r2, c2 = min(r1 + random.randint(1, 2), rows - 1), min(c1 + random.randint(1, 2), cols - 1)
-            for r in range(r1, r2 + 1):
-                for c in range(c1, c2 + 1):
-                    if self.grid[r][c] == EMPTY:
-                        self.grid[r][c] = OBSTACLE
-            self.obstacles.append(((r1, c1), (r2, c2)))
+                state = agents[i].get_state(pos, env.goal)
+                action = agents[i].choose_action(state)
 
-    def _random_empty_cell(self):
-        while True:
-            r, c = random.randint(0, self.rows - 1), random.randint(0, self.cols - 1)
-            if self.grid[r][c] == EMPTY:
-                return (r, c)
+                next_pos = apply_swarm_rules(
+                    pos, action, positions, env.obstacles, env.goal,
+                    rows=env.rows, cols=env.cols
+                )
 
-    def display(self):
-        for row in self.grid:
-            print(" ".join(row))
-        print()
+                reward = reward_function(next_pos, env.goal, env.obstacles)
+                next_state = agents[i].get_state(next_pos, env.goal)
+                agents[i].update(state, action, reward, next_state)
+
+                new_positions.append(next_pos)
+
+            positions = new_positions
+            agents_history.append((episode+1, positions))  # include episode number
+
+            if all(p == env.goal for p in positions):
+                print(f"✅ Episode {episode+1}: all agents reached the goal in {step+1} steps")
+                break
+
+        # add episode history to global
+        all_history.extend(agents_history)
+        # add a pause (3 frames with same positions)
+        all_history.extend([(episode+1, positions)] * 3)
+
+    # Visualize all episodes
+    visualize(env, all_history)
 
 if __name__ == "__main__":
-    env = GridWorld(GRID_SIZE[0], GRID_SIZE[1], NUM_AGENTS, NUM_OBSTACLES)
-    env.display()
-    print("Agents:", env.agents)
-    print("Goal:", env.goal)
-    print("Obstacles:", env.obstacles)
+    run_simulation()
