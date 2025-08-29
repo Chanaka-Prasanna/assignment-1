@@ -6,8 +6,8 @@ from visualize import visualize
 NUM_AGENTS = 3
 NUM_OBSTACLES = 2
 GRID_SIZE = (10, 10)
-EPISODES = 10       # for visualization, run 1 episode
-MAX_STEPS = 100
+EPISODES = 1       # for visualization, run 1 episode
+MAX_STEPS = 200
 
 def reward_function(agent_pos, goal_pos, obstacles):
     if agent_pos == goal_pos:
