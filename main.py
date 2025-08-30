@@ -6,7 +6,7 @@ from visualize import visualize
 NUM_AGENTS = 20
 NUM_OBSTACLES = 3
 GRID_SIZE = (10, 10)
-EPISODES = 1       # for visualization, run 1 episode
+EPISODES = 1      
 MAX_STEPS = 1000
 
 def reward_function(agent_pos, goal_pos, obstacles):
@@ -19,13 +19,16 @@ def run_simulation():
     env = GridWorld(GRID_SIZE[0], GRID_SIZE[1], NUM_AGENTS, NUM_OBSTACLES)
     agents = [QLearningAgent(env.rows, env.cols) for _ in range(NUM_AGENTS)]
 
-    all_history = []  # track across episodes
+    all_history = []  
+    summary_msg = None
 
     for episode in range(EPISODES):
         positions = env.reset()
         agents_history = []
-        reached_count = 0  # track how many are at goal (for viz)
-        for step in range(MAX_STEPS):
+        reached_count = 0  
+        step = 0
+        while True:
+            step += 1
             new_positions = []
             for i, pos in enumerate(positions):
                 if pos == env.goal:
@@ -66,6 +69,8 @@ def run_simulation():
 
     # Visualize all episodes
     visualize(env, all_history)
+    if summary_msg:
+        print(summary_msg)
 
 if __name__ == "__main__":
     run_simulation()
