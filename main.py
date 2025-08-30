@@ -24,7 +24,7 @@ def run_simulation():
     for episode in range(EPISODES):
         positions = env.reset()
         agents_history = []
-
+        reached_count = 0  # track how many are at goal (for viz)
         for step in range(MAX_STEPS):
             new_positions = []
             for i, pos in enumerate(positions):
@@ -50,16 +50,19 @@ def run_simulation():
                 new_positions.append(next_pos)
 
             positions = new_positions
-            agents_history.append((episode+1, positions))  # include episode number
+            # compute reached count for visualization/metrics
+            reached_count = sum(1 for p in positions if p == env.goal)
+            # store (episode, positions, reached_count)
+            agents_history.append((episode+1, positions, reached_count))
 
-            if all(p == env.goal for p in positions):
+            if reached_count == NUM_AGENTS:
                 print(f"✅ Episode {episode+1}: all agents reached the goal in {step+1} steps")
                 break
 
         # add episode history to global
         all_history.extend(agents_history)
-        # add a pause (3 frames with same positions)
-        all_history.extend([(episode+1, positions)] * 3)
+        # add a pause (3 frames with same positions) carrying the reached count
+        all_history.extend([(episode+1, positions, reached_count)] * 3)
 
     # Visualize all episodes
     visualize(env, all_history)
