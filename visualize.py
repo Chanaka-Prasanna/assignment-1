@@ -2,14 +2,6 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 from matplotlib.animation import FuncAnimation
 
-def _extract(frame, env):
-    # Accepts (episode, positions) or (episode, positions, reached)
-    if len(frame) == 3:
-        return frame
-    ep, positions = frame
-    reached = sum(1 for p in positions if p == env.goal)
-    return ep, positions, reached
-
 def visualize(env, agents_history):
     fig, ax = plt.subplots()
     ax.set_xlim(-0.5, env.cols - 0.5)
@@ -32,18 +24,19 @@ def visualize(env, agents_history):
     agents_plot, = ax.plot([], [], "bo", markersize=10)
 
     # Title and overlay text objects
-    title = ax.set_title("Episode 1")
+    title = ax.set_title("Run")
     overlay = ax.text(0.02, 1.02, "", transform=ax.transAxes, ha="left", va="bottom")
 
     def update(frame):
         if frame < len(agents_history):
-            ep, positions, reached = _extract(agents_history[frame], env)
+            positions = agents_history[frame]
+            reached = sum(1 for p in positions if p == env.goal)
             # update agent positions
             x = [c for r, c in positions]
             y = [r for r, c in positions]
             agents_plot.set_data(x, y)
             # update title and overlay
-            title.set_text(f"Episode {ep}")
+            title.set_text("Run")
             overlay.set_text(f"Reached: {reached}/{len(positions)}")
         return agents_plot, title, overlay
 
