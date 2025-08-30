@@ -5,7 +5,7 @@ from visualize import visualize
 
 NUM_AGENTS = 20
 NUM_OBSTACLES = 3
-GRID_SIZE = (10, 10)
+GRID_SIZE = (20, 50)
 MAX_STEPS = 1000
 
 def reward_function(agent_pos, goal_pos, obstacles):
@@ -58,7 +58,7 @@ def run_simulation():
         agents_history.append(positions)
 
         if reached_count == NUM_AGENTS:
-            print(f"✅ All agents reached the goal in {step+1} steps")
+            summary_msg = f"✅ All agents reached the goal in {step+1} steps"
             break
 
     # add run history to global
