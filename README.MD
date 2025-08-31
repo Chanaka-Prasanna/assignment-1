@@ -52,11 +52,11 @@ cd assignment-1
   - Activate (PowerShell): `conda activate ./venv`
 
 - Python venv (no Conda)
-
-  ```powershell
-  py -3.10 -m venv venv
-  .\venv\Scripts\Activate.ps1
-  ```
+  - Create: `python -m venv venv`
+  - Activate (CMD): `venv\Scripts\activate.bat` or
+  - Activate (PowerShell): `.\venv\Scripts\Activate.ps1`
+    - If you get a “running scripts is disabled” error, you need to change the execution policy (only once):
+      -Run `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser`
 
 ### Install dependencies
 
