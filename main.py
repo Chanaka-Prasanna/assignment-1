@@ -3,10 +3,10 @@ from rl import QLearningAgent
 from swarm import apply_swarm_rules
 from visualize import visualize
 
-NUM_AGENTS = 20
-NUM_OBSTACLES = 3
-GRID_SIZE = (20, 50)
-MAX_STEPS = 1000
+NUM_AGENTS = 3
+NUM_OBSTACLES = 2
+GRID_SIZE = (10, 10)
+MAX_STEPS = 500
 
 def reward_function(agent_pos, goal_pos, obstacles):
     if agent_pos == goal_pos:
