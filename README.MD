@@ -17,7 +17,7 @@ GitHub repository: https://github.com/Chanaka-Prasanna/assignment-1
 
 ## Project Description
 
-This project simulates a swarm of agents navigating a 2D grid with rectangular obstacles toward a single goal. Each agent learns online via tabular Q‑Learning while movement is constrained by swarm rules (keep distance, avoid obstacles, stay in bounds). The run is animated to show agent positions, obstacles, and the number of agents that have reached the goal.
+This project simulates a swarm of agents navigating a 2D grid with rectangular obstacles toward a single goal. Each agent learns online via tabular Q‑Learning while movement is constrained by swarm rules (keep distance, avoid obstacles, stay in bounds). The run is animated to show agent positions, obstacles, the number of agents that have reached the goal, and the paths taken by each agent as colored trails.
 
 ## Features Implemented
 
@@ -27,8 +27,8 @@ This project simulates a swarm of agents navigating a 2D grid with rectangular o
 - Action space includes stay and 4-neighborhood moves: down, up, right, left, stay.
 - Swarm rules ensure: in‑bounds movement, obstacle avoidance, and minimum Manhattan spacing from other agents except when stepping onto the goal (`swarm.apply_swarm_rules`).
 - Online learning each step; agents continue until all reach the goal (`main.py`).
-- Matplotlib animation of the grid, obstacles, goal (red star), and live reached count overlay (`visualize.py`).
-- Simple configurable parameters (`NUM_AGENTS`, `NUM_OBSTACLES`, `GRID_SIZE`, `MAX_STEPS`) and reward shaping via `reward_function` in `main.py`.
+- Matplotlib animation of the grid, obstacles, goal (red star), live reached count overlay, and per‑agent path trails with distinct colors (agent markers are a uniform blue) (`visualize.py`).
+- Simple configurable parameters (`NUM_AGENTS`, `NUM_OBSTACLES`, `GRID_SIZE`) and reward shaping via `reward_function` in `main.py`.
 
 ## How to Install and Run
 
@@ -73,7 +73,7 @@ python main.py
 ## How to Use
 
 - Edit parameters in `main.py`:
-  - `NUM_AGENTS`, `NUM_OBSTACLES`, `GRID_SIZE`, `MAX_STEPS`
+  - `NUM_AGENTS`, `NUM_OBSTACLES`, `GRID_SIZE`
 - Tweak `reward_function` to encourage desired behavior (goal reward, obstacle penalty, step penalty).
 - Run `python main.py` to launch an animation window. The overlay shows how many agents have reached the goal.
 
@@ -108,7 +108,7 @@ Defined in `rl.py` (`QLearningAgent.update`), with constants `ALPHA = 0.5`, `GAM
 - Code clarity and scalability
   - Clear separation of concerns across `env.py`, `rl.py`, `swarm.py`, `visualize.py`, and `main.py`. Parameters centralized in `main.py`. Logic is easily extensible (e.g., more actions, different rewards, more rules).
 - Visualization clarity
-  - Grid with ticks, gray rectangles for obstacles, red star for goal, blue dots for agents, and a live reached counter overlay updated each frame.
+  - Grid with ticks, gray rectangles for obstacles, red star for goal, blue dots for agents, distinct trail colors per agent, and a live reached counter overlay updated each frame.
 
 ## Project Structure
 

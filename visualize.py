@@ -20,8 +20,15 @@ def visualize(env, agents_history):
     # Draw goal
     ax.plot(env.goal[1], env.goal[0], "r*", markersize=15)
 
-    # Plot agents
+    # Plot agents (current positions) - all same color
     agents_plot, = ax.plot([], [], "bo", markersize=10)
+
+    # Trails per agent (paths taken) - distinct colors
+    num_agents = len(agents_history[0]) if agents_history else 0
+    cmap = plt.get_cmap("tab10")
+    trail_colors = [cmap(i % cmap.N) for i in range(num_agents)]
+    trails = [ax.plot([], [], "-", color=trail_colors[i], linewidth=1.5, alpha=0.9)[0]
+              for i in range(num_agents)]
 
     # Title and overlay text objects
     title = ax.set_title("Run")
@@ -35,10 +42,15 @@ def visualize(env, agents_history):
             x = [c for r, c in positions]
             y = [r for r, c in positions]
             agents_plot.set_data(x, y)
+            # update trails up to current frame
+            for i in range(num_agents):
+                xs = [agents_history[t][i][1] for t in range(frame + 1)]
+                ys = [agents_history[t][i][0] for t in range(frame + 1)]
+                trails[i].set_data(xs, ys)
             # update title and overlay
             title.set_text("Run")
             overlay.set_text(f"Reached: {reached}/{len(positions)}")
-        return agents_plot, title, overlay
+        return [agents_plot, *trails, title, overlay]
 
     # disable blit so text updates properly
     ani = FuncAnimation(fig, update, frames=len(agents_history), interval=500, blit=False, repeat=False)
